@@ -23,7 +23,7 @@ export class Header extends Component {
     if (!isLoggedIn) {
       return (
         <NavItem>
-          <NavLink href="/login/">Log in</NavLink>
+          <NavLink href='/login/'>ログイン</NavLink>
         </NavItem>
       );
     } else {
@@ -48,8 +48,8 @@ export class Header extends Component {
       return <DropdownItem
         key={item.text}
         href={item.href}>
-        {item.text}
-      </DropdownItem>;
+          {item.text}
+        </DropdownItem>;
     });
   }
 
@@ -59,47 +59,46 @@ export class Header extends Component {
         {nav : true, caret : true}
         : {nav : true};
       return (
-        <UncontrolledDropdown nav>
+        <UncontrolledDropdown nav style={{ margin: 0 }}>
 
           <DropdownToggle {...dropdownAttr}>
             <span className="oi oi-person mr-2"/>
-            <span className="navbar-text mr-2">{loginName}</span>
+            <span className="navbar-text mr-2">メニュー</span>
           </DropdownToggle>
 
           {
             this.shouldHaveDropdown(menu, onLogout) &&
-
-            <DropdownMenu right>
+            <DropdownMenu end>
               {this.showMenuItems(menu)}
-              
-              {onLogout &&   
-              <DropdownItem
-                to="/"
-                onClick={onHome}>
-                Home
-              </DropdownItem>
-              }
-              {onLogout &&   
-              <DropdownItem
-                to="/ModelReTraining"
-                onClick={onMLTraining}>
-                Model Training
-              </DropdownItem>
-              }
-              {onLogout &&   
-              <DropdownItem
-                to="/BatchUpload"
-                onClick={onBatchUpload}>
-                Batch Analysis
-              </DropdownItem>
+
+              {onLogout &&
+                <DropdownItem
+                  to="/"
+                  onClick={onHome}>
+                  オンデマンド検出
+                </DropdownItem>
               }
               {onLogout &&
-              <DropdownItem
-                to="/logout"
-                onClick={onLogout}>
-                Log out
-              </DropdownItem>
-              }           
+                <DropdownItem
+                  to="/ModelReTraining"
+                  onClick={onMLTraining}>
+                  学習
+                </DropdownItem>
+              }
+              {onLogout &&
+                <DropdownItem
+                  to="/BatchUpload"
+                  onClick={onBatchUpload}>
+                  バッチ検出
+                </DropdownItem>
+              }
+              {onLogout &&
+                <DropdownItem
+                  to="/logout"
+                  onClick={onLogout}>
+                  ログアウト
+                </DropdownItem>
+              }
 
             </DropdownMenu>
           }

@@ -5,10 +5,10 @@ import { withRouter } from "react-router-dom";
 import { Auth } from "aws-amplify";
 
 // Instead of using Bootstrap with
-// `import 'bootstrap/dist/css/bootstrap.min.css';`
+import 'bootstrap/dist/css/bootstrap.min.css';
 // We use the customized Bootstrap css. See  comments in "src/custom-bootstrap/scss/custom.scss" for details.
-import './custom-bootstrap/css/custom.css'
-import 'open-iconic/font/css/open-iconic-bootstrap.css';
+// import './custom-bootstrap/css/custom.css'
+// import 'open-iconic/font/css/open-iconic-bootstrap.css';
 
 import config from "./config";
 
@@ -61,15 +61,15 @@ class App extends Component {
     this.props.history.push("/login");
   };
 
-  handleModelReTraining = async () => {    
+  handleModelReTraining = async () => {
     this.props.history.push("/ModelReTraining");
   };
 
-  handleGoHome = async () => {    
+  handleGoHome = async () => {
     this.props.history.push("/");
   };
 
-  handleBatchUpload = async () => {    
+  handleBatchUpload = async () => {
     this.props.history.push("/BatchUpload");
   };
 
@@ -93,7 +93,7 @@ class App extends Component {
 
         />
         <Routes childProps={childProps}/>
-        
+
       </DemoContainer>
     );
   }

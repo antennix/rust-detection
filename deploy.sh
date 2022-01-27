@@ -75,7 +75,7 @@ aws cloudformation deploy --template-file API/sam.json \
     DeploymentBucket=${S3_DEPLOY_BUCKET} \
     LambdaPackagePath="deployment.zip" \
     InferenceLambdaPackagePath="deployment.zip" \
-    ImagesBucketName=Test \
+    ImagesBucketName="corrosion-detection-website-$RAND_NUMBER-uploaded-images" \
     TrainingEndpointArn=${trainingAndEndpointStateMachineArn} \
     TrainingArn=${trainingStateMachineArn} \
     EndpointArn=${endpointStateMachineArn}
@@ -209,7 +209,7 @@ aws s3api put-bucket-notification-configuration \
 
 #========================== Cleanup ===========================================
 
-aws s3 rb $S3_DEPLOY_BUCKET_REF --force # Remove the temporary bucket used for CFN installation
+# aws s3 rb $S3_DEPLOY_BUCKET_REF --force # Remove the temporary bucket used for CFN installation
 
 echo "The Corrosion Detection app can be accessed at ${cloudFrontUrl}"
 

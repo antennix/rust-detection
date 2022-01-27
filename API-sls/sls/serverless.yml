@@ -1,0 +1,26 @@
+service: opencv
+
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: python3.6
+  lambdaHashingVersion: 20201221
+  region: us-east-1
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    dockerFile: Dockerfile
+    layer: true
+    usePipenv: false
+    slim: true
+    strip: false
+    useDownloadCache: true
+    useStaticCache: true
+    # layer：有効化すると AWS Lambda Layer に Python パッケージをデプロイします。
+    # dockerizePip：有効化すると、 Docker 上で pip コマンドを実行します。
+    # dockerImage：dockerizePip 有効時に、利用する Docker イメージを選択します。

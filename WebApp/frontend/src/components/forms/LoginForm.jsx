@@ -40,19 +40,19 @@ export class LoginForm extends Component {
     return (
       <Form onSubmit={this.handleSubmit} className="login-form">
         <FormGroup>
-          <Label for="username">Username</Label>
-          <Input type="string" name="username" id="username" placeholder="Username"
-                 onChange={this.handleChange}/>
+          <Label for="username">ユーザ</Label>
+          <Input type="string" name="username" id="username" placeholder=""
+                  onChange={this.handleChange}/>
         </FormGroup>
         <FormGroup>
-          <Label for="password">Password</Label>
-          <Input type="password" name="password" id="password" placeholder="Password"
-                 onChange={this.handleChange}/>
+          <Label for="password">パスワード</Label>
+          <Input type="password" name="password" id="password" placeholder=""
+                onChange={this.handleChange}/>
         </FormGroup>
         <LoaderButton
-          text="Login"
+          text="ログイン"
           isLoading={this.props.isLoading}
-          loadingText="Logging in…"
+          loadingText="ログイン処理中"
           disabled={!this.validateForm()}
           block
         />
@@ -65,4 +65,3 @@ LoginForm.propTypes = {
   isLoading : PropTypes.bool,
   onSubmit : PropTypes.func
 };
-

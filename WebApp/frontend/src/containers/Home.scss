@@ -3,20 +3,37 @@
 }
 
 img.uploaded-image {
-  width: 550px;
-  height: 550px;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  object-fit: contain;
+}
+
+.loadingCard {
+  position: absolute !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100% !important;
 }
 
 img.original-size-image {
   max-width: 100%;
   max-height: 100%;
   width: 800px;
-  height: 600px;  
+  height: 600px;
 }
 
-.modal-dialog.modal-90w{
-  max-width: 100%;  
+.modal-dialog.modal-90w {
+  max-width: 100%;
   max-width: 100%;
 }
 
@@ -26,10 +43,15 @@ table.table-endpoints tbody {
   width: 100%;
 }
 
-table.table-endpoints thead, .table-endpoints tbody, .table-endpoints tr, .table-endpoints td, .table-endpoints th {
+table.table-endpoints thead,
+.table-endpoints tbody,
+.table-endpoints tr,
+.table-endpoints td,
+.table-endpoints th {
   display: block;
 }
-table.table-endpoints tbody td, .table-endpoints thead > tr> th {
+table.table-endpoints tbody td,
+.table-endpoints thead > tr > th {
   float: left;
   border-bottom-width: 0;
 }
