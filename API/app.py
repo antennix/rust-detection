@@ -1,6 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: MIT-0
 
+from urllib import request
 from chalice import Chalice
 from chalice import BadRequestError
 import time
@@ -30,9 +31,9 @@ dynamodb = boto3.resource('dynamodb')
 app = Chalice(app_name='CorrosionDetection')
 app.debug = True
 
-TRAINING_JOB_STATE_MACHINE_ARN = ssm.get_parameter(Name='CORROSION_TRAINING_JOB_STATE_MACHINE_ARN', WithDecryption=False)['Parameter']['Value'] #os.environ['CORROSION_TRAINING_JOB_STATE_MACHINE_ARN']
-ENDPOINT_JOB_STATE_MACHINE_ARN = ssm.get_parameter(Name='CORROSION_ENDPOINT_JOB_STATE_MACHINE_ARN', WithDecryption=False)['Parameter']['Value'] #os.environ['CORROSION_ENDPOINT_JOB_STATE_MACHINE_ARN']
-MODEL_ENDPOINT_JOB_STATE_MACHINE_ARN = ssm.get_parameter(Name='MODEL_ENDPOINT_JOB_STATE_MACHINE_ARN', WithDecryption=False)['Parameter']['Value']#os.environ['MODEL_ENDPOINT_JOB_STATE_MACHINE_ARN']
+TRAINING_JOB_STATE_MACHINE_ARN = ssm.get_parameter(Name='CORROSION_TRAINING_JOB_STATE_MACHINE_ARN', WithDecryption=False)['Parameter']['Value']  # os.environ['CORROSION_TRAINING_JOB_STATE_MACHINE_ARN']
+ENDPOINT_JOB_STATE_MACHINE_ARN = ssm.get_parameter(Name='CORROSION_ENDPOINT_JOB_STATE_MACHINE_ARN', WithDecryption=False)['Parameter']['Value']  # os.environ['CORROSION_ENDPOINT_JOB_STATE_MACHINE_ARN']
+MODEL_ENDPOINT_JOB_STATE_MACHINE_ARN = ssm.get_parameter(Name='MODEL_ENDPOINT_JOB_STATE_MACHINE_ARN', WithDecryption=False)['Parameter']['Value']  # os.environ['MODEL_ENDPOINT_JOB_STATE_MACHINE_ARN']
 
 print(TRAINING_JOB_STATE_MACHINE_ARN)
 print(ENDPOINT_JOB_STATE_MACHINE_ARN)
@@ -42,10 +43,20 @@ print(MODEL_ENDPOINT_JOB_STATE_MACHINE_ARN)
 @app.route('/detect', methods=['PUT'], cors=True, authorizer=app_authorizer)
 def analyzeImage():
     body = app.current_request.json_body
-    return inference.init(body)
+    inferenced_image = inference.init(body)
+
+    # S3に保存
+    imageBody = base64.b64decode(inferenced_image['image'])
+    put_object = put_s3(imageBody, 'jpeg')
+
+    return {
+        'analyzedImageKey': put_object['key1'],
+        'percent': {'p1': inferenced_image['percent']},
+        'statusCode': 200
+    }
 
 
-def put_s3(image,  imageformat):
+def put_s3(image, imageformat):
     s3 = boto3.resource('s3')
 
     uu_id = str(uuid.uuid4())
@@ -55,16 +66,16 @@ def put_s3(image,  imageformat):
         Body=image
     )
 
-    uu_id1 = str(uuid.uuid4())
-    s3.Bucket(IMAGE_S3_BUCKET).put_object(
-        ACL='private',
-        Key='public/inference/{}.{}'.format(uu_id1, imageformat),
-        Body=image
-    )
+    # uu_id1 = str(uuid.uuid4())
+    # s3.Bucket(IMAGE_S3_BUCKET).put_object(
+    #     ACL='private',
+    #     Key='public/inference/{}.{}'.format(uu_id1, imageformat),
+    #     Body=image
+    # )
 
     return {
-            'key1': 'inference/{}.{}'.format(uu_id, imageformat),
-            'key2': 'inference/{}.{}'.format(uu_id1, imageformat)
+        'key1': 'inference/{}.{}'.format(uu_id, imageformat),
+        # 'key2': 'inference/{}.{}'.format(uu_id1, imageformat)
     }
 
 
@@ -84,9 +95,9 @@ def put_s3ForBatch(image, BatchId, BatchName, filename):
     )
 
     return {
-            'key1': 'inference/{}_{}/Gen_{}'.format(BatchId, BatchName, filename),
-            'key2': 'inference/{}_{}/Org_{}'.format(BatchId, BatchName, filename)
-        }
+        'key1': 'inference/{}_{}/Gen_{}'.format(BatchId, BatchName, filename),
+        'key2': 'inference/{}_{}/Org_{}'.format(BatchId, BatchName, filename)
+    }
 
 
 @app.route('/Model', methods=['POST'], cors=True, authorizer=app_authorizer)
@@ -164,13 +175,13 @@ def updateCurrentEndpoint():
     print(body)
 
     try:
-        
+
         current = ssm.get_parameter(Name='XGB_ENDPOINT', WithDecryption=False)
         currentEndpoint = current['Parameter']['Value']
 
         ssm.put_parameter(Name='XGB_ENDPOINT',
-                                    Value=body['NewEndpoint'],
-                                    Type='String', Overwrite=True)
+                          Value=body['NewEndpoint'],
+                          Type='String', Overwrite=True)
 
         ssm.put_parameter(Name='PREVIOUS_SAGEMAKER_SSD_ENDPOINT',
                           Value=currentEndpoint,
